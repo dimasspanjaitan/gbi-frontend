@@ -23,55 +23,59 @@
 
             <v-divider></v-divider>
 
-            <v-list v-for="item in items" :key="item.name">
-                <v-list-group
-                v-if="item.children"
-                v-model="item.model"
-                :key="item.name"
-                :prepend-icon="item.model ? item.icon : item['icon-alt']"
-                append-icon=""
-                >
-                    <template v-slot:activator>
-                        <v-list-item-title>{{ item.text }}</v-list-item-title>
-                    </template>
-                    
-                    <v-list-item
-                    v-for="child in item.children"
-                    :key="child.name"
-                    link
-                    @click="openLink(child.url)"
+            <v-list>
+                <template v-for="(item, i) in items">
+                    <v-list-group
+                    v-if="item.children"
+                    v-model="item.model"
+                    :key="item.name"
+                    :prepend-icon="item.model ? item.icon : item['icon-alt']"
+                    append-icon=""
                     >
-                        <v-list-group
-                        v-if="child.children"
-                        >
-
-                        </v-list-group>
+                        <template v-slot:activator>
+                            <v-list-item-title>{{ item.text }}</v-list-item-title>
+                        </template>
+                        
                         <v-list-item
-                        v-else
+                        v-for="child in item.children"
+                        :key="child.name"
+                        link
+                        @click="openLink(child.url)"
                         >
-                            <v-list-item-icon>
-                                <v-icon>{{ child.icon }}</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>{{ child.text }}</v-list-item-title>
-                            </v-list-item-content>
+                            <v-list-group
+                            v-if="child.children"
+                            >
+
+                            </v-list-group>
+                            <v-list-item
+                            v-else
+                            >
+                                <v-list-item-icon>
+                                    <v-icon small   >{{ child.icon }}</v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{ child.text }}</v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
                         </v-list-item>
+                    </v-list-group>
+
+                    <v-list-item v-else link :to="item.url" :key="i">
+                        <v-list-item-icon>
+                            <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>{{ item.text }}</v-list-item-title>
                     </v-list-item>
-                </v-list-group>
-                <v-list-item
-                v-else
-                link
-                :to="item.url"
-                >
-                    <v-list-item-icon>
-                        <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>{{ item.text }}</v-list-item-title>
-                </v-list-item>
+                </template>
             </v-list>
         </v-navigation-drawer>
 
-        <v-app-bar app>
+        <v-app-bar
+        app
+        flat
+        outlined
+        dense
+        >
             <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
             <v-toolbar-title></v-toolbar-title>
@@ -80,6 +84,22 @@
         <v-main>
             <router-view />
         </v-main>
+
+        <v-footer 
+        padless
+        elevation="0"
+        outlined
+        >
+            <v-col
+            class="text-right"
+            cols="12"
+            >
+                <span style="font-size: 12px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
+                    Power by <a href="http://www.bataxdev.com" target="_blank" rel="noopener noreferrer">BataxDev   </a>
+                </span>
+                <!-- {{ new Date().getFullYear() }} — <strong>Vuetify</strong> -->
+            </v-col>
+        </v-footer>
     </v-app>
 </template>
 <script>

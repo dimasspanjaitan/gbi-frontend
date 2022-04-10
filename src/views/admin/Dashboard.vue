@@ -1,15 +1,17 @@
 <template>
     <div>
-        DASHBOARD
+      <v-card-title>DASHBOARD</v-card-title>
     </div>
 </template>
 <script>
 export default {
     name: 'Dashboard',
-    data: () => ({
-      loading: false,
-      selection: 1,
-    }),
+    data(){
+      return{
+        loading: false,
+        selection: 1,
+      }
+    },
 
     methods: {
       reserve () {
