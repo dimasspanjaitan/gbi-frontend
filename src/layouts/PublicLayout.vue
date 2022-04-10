@@ -1,12 +1,12 @@
 <template>
     <v-app id="inspire">
-        <!-- <v-app-bar
+        <v-app-bar
         app
         color="primary"
         dark
         >
-            HOME
-        </v-app-bar> -->
+            HOME BAR
+        </v-app-bar>
         <v-main>
             <router-view />
         </v-main>
