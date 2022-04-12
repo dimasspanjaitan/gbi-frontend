@@ -1,17 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import post from './post'
+import category from './category'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  state: {
-  },
-  getters: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
+const store = new Vuex.Store({
   modules: {
+    post,
+    category,
   }
 })
+
+export default store

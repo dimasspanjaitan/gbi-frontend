@@ -93,6 +93,7 @@
             <v-col
             class="text-right"
             cols="12"
+            lg
             >
                 <span style="font-size: 12px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
                     Power by <a href="http://www.bataxdev.com" target="_blank" rel="noopener noreferrer">BataxDev   </a>
