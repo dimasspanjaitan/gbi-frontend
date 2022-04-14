@@ -4,7 +4,7 @@
             <v-card-title>
                 LIST POSTINGAN
                 <div class="pl-5">
-                    <v-btn small class="bg-secondary" elevation="0" @click="show()">
+                    <v-btn small color="success" elevation="0" @click="show()">
                         Tambah
                     </v-btn>
                 </div>
@@ -21,6 +21,8 @@
             :headers="headers"
             :items="posts"
             :search="search"
+            :options.sync="option"
+            :server-items-length="total"
             >
                 <template v-slot:item="row">
                     <tr>
@@ -31,13 +33,13 @@
                         <td>{{row.item.category}}</td>
                         <td>
                             <span v-if="row.item.is_publish">
-                                <v-chip color="success" dark>Publis</v-chip>
+                                <v-chip small label color="success" dark>Publis</v-chip>
                             </span>
                             <span v-else>
-                                <v-chip color="yellow darken-2" dark>Pending</v-chip>
+                                <v-chip small label color="yellow darken-2" dark>Pending</v-chip>
                             </span>
                         </td>
-                        <td>{{row.item.publish_date}}</td>
+                        <td>{{row.item.publish_date | formatDate}}</td>
                         <td width="10%">
                             <v-icon small color="green" class="mr-3" @click="updateData(row.item)">mdi-pencil</v-icon>
                             <v-icon small color="red" @click="deleteData(row.item)">mdi-delete</v-icon>
@@ -95,15 +97,15 @@ export default {
             q.populate='*'
             await this.getPost(q).then(({data}) => {
                 this.posts = data.data.map(p => {
-                    console.log(p)
                     p.title = p.attributes.title
                     p.slug = p.attributes.slug
                     p.is_publish = p.attributes.is_publish
                     p.content = p.attributes.content
                     p.tag = p.attributes.tag
                     p.image = p.attributes.image.data
-                    p.publihs_date = p.attributes.publihs_date
-                    p.category = p.attributes.category.data.attributes.name
+                    p.publish_date = p.attributes.publish_date
+                    p.category_name = p.attributes.category.data.attributes.name
+                    p.category = p.attributes.category.data.id
                     return p
                 })
                 this.total = data.length
@@ -126,15 +128,15 @@ export default {
             this.dialog = true
         },
         async deleteData(row){
-            await this.$dialog.confirm({
-                text: 'Yakin ingin menghapus'+` ${row.name}?`,
+            await this.$toast.info({
+                message: 'Yakin menghapus data' + ` ${row.title}?`
             }).then(resp => {
                 if(resp){
                     this.deleteRow(row).then(q => {
                         if(q.status == 200){
                             this.load()
-                            this.$toast.success('Berhasil menghapus data.')
-                        }else this.$toast(q.message)
+                            this.$toast.success('Berhasil menghapus data')
+                        }else this.$toast.error('Gagal menghapus data')
                     })
                 }
             })

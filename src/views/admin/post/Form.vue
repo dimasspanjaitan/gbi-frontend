@@ -1,8 +1,6 @@
 <template>
-  <v-card>
-        <v-card-title>
-          <span class="text-h5 ml-3">List Postingan</span>
-        </v-card-title>
+  <v-card class="pa-5">
+        <v-toolbar color="primary" flat dark>Postingan</v-toolbar>
         <v-card-text>
           <v-form ref="form" lazy-validation>
             <v-container>
@@ -36,11 +34,38 @@
                     <vue-editor
                         v-model="form.content"
                     ></vue-editor>
-                    <v-switch
-                        v-model="form.is_publish"
-                        inset
-                        label="Status"
-                    ></v-switch>
+                    <v-row>
+                        <v-menu
+                            v-model="menu"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                        >
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                    v-model="form.publish_date"
+                                    label="Tanggal Publis"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    class="pa-2 pt-10"
+                                ></v-text-field>
+                            </template>
+                            <v-date-picker
+                            v-model="form.publish_date"
+                            @input="menu = false"
+                            ></v-date-picker>
+                        </v-menu>
+                        <v-switch
+                            v-model="form.is_publish"
+                            inset
+                            label="Status"
+                            class="pt-10 pl-5 pr-10"
+                        ></v-switch>
+                    </v-row>
                     <v-select
                         :items="categories"
                         label="Kategori"
@@ -102,9 +127,12 @@ export default {
                 value => (value || '').length <= 40 || 'Maksimal 40 karakter',
             ],
             imageRules: [
-                value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
+                value => !value || value.size < 2000000 || 'Gambar minimal 2 MB!',
             ],
-            categories: []
+            categories: [],
+            publish_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            menu: false,
+            modal: false,
         }
     },
     components: {
@@ -119,6 +147,7 @@ export default {
     methods: {
         ...mapActions({
             saveData: 'post/create',
+            updateData: 'post/update',
             getCategory: 'category/all'
         }),
         closeDialog(){
@@ -133,8 +162,8 @@ export default {
                         if(resp.status){
                             this.form = {};
                             this.$emit('close', false);
-                            this.$toast.success('Berhasil menyimpan data')
-                        } else this.$toast.error(resp.message);
+                            this.$notify('Berhasil menyimpan1 data')
+                        } else this.$notify('Gagal menyimpan data', {color: 'danger'})
                         })
                     } else {
                         /** UPDATE */
@@ -142,13 +171,13 @@ export default {
                         if(resp.status){
                             this.form = {}
                             this.$emit('close',false);
-                            this.$toast.success('Berhasil mengubah data')
-                        } else this.$toast.error(resp.message);
+                            this.$notify('Berhasil mengubah data')
+                        } else this.$notify('Gagal mengubah data', {color: 'danger'})
                         })
 
                     }
                 }catch(e){
-                this.$toast.error(this.$t('i_notvalid'));
+                console.log(e)
                 }
             }
         },
