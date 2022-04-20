@@ -36,6 +36,7 @@ const routes = [
       { path: 'baptism', component: () => import('../views/admin/baptism/List.vue') },
       { path: 'wedding', component: () => import('../views/admin/wedding/List.vue') },
       { path: 'category', component: () => import('../views/admin/category/List.vue') },
+      { path: 'musing', component: () => import('../views/admin/musing/List.vue') },
     ]
   }
 
