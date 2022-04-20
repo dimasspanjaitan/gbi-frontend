@@ -1,6 +1,6 @@
 <template>
   <v-card class="pa-5">
-        <v-toolbar color="primary" flat dark>Postingan</v-toolbar>
+        <v-toolbar color="primary" flat dark>POST</v-toolbar>
         <v-card-text>
           <v-form ref="form" lazy-validation>
             <v-container>
@@ -33,6 +33,8 @@
                     ></v-file-input>
                     <vue-editor
                         v-model="form.content"
+                        :rules="contentRules"
+                        
                     ></vue-editor>
                     <v-row>
                         <v-menu
@@ -68,6 +70,7 @@
                     </v-row>
                     <v-select
                         :items="categories"
+                        :rules="categoryRules"
                         label="Kategori"
                         v-model="form.category"
                     ></v-select>
@@ -86,7 +89,7 @@
             Close
           </v-btn>
           <v-btn
-            color="grey darken-1"
+            color="green darken-1"
             text
             @click="save"
           >
@@ -129,6 +132,12 @@ export default {
             imageRules: [
                 value => !value || value.size < 2000000 || 'Gambar minimal 2 MB!',
             ],
+            contentRules: [
+                value => !!value || 'Konten tidak boleh kosong',
+            ],
+            categoryRules: [
+                value => !!value || 'Kategori tidak boleh kosong',
+            ],
             categories: [],
             publish_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             menu: false,
@@ -143,10 +152,6 @@ export default {
             if(!this.mode) return {}
             else return this.data
         }
-    },
-    setup(){
-        const toast = useToast()
-        return {toast}
     },
     methods: {
         ...mapActions({
