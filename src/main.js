@@ -3,8 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import VueToast from 'vue-toast-notification'
+import Toast from 'vue-toastification'
 import moment from 'moment'
+import VuetifyDialog from 'vuetify-dialog'
+
+import "vue-toastification/dist/index.css"
+import 'vuetify-dialog/dist/vuetify-dialog.css'
 
 Vue.config.productionTip = false
 Vue.filter('formatDate', function(value) {
@@ -13,10 +17,16 @@ Vue.filter('formatDate', function(value) {
   }
 });
 
+Vue.use(Toast)
+Vue.use(VuetifyDialog, {
+  context: {
+    vuetify
+  }
+})
+
 new Vue({
   router,
   store,
   vuetify,
-  VueToast,
   render: h => h(App)
 }).$mount('#app')

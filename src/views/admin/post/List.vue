@@ -128,15 +128,16 @@ export default {
             this.dialog = true
         },
         async deleteData(row){
-            await this.$toast.info({
-                message: 'Yakin menghapus data' + ` ${row.title}?`
+            await this.$dialog.confirm({
+                text: 'Yakin menghapus data '+row.title+'?',
+                title: 'Konfirmasi'
             }).then(resp => {
                 if(resp){
                     this.deleteRow(row).then(q => {
                         if(q.status == 200){
                             this.load()
-                            this.$toast.success('Berhasil menghapus data')
-                        }else this.$toast.error('Gagal menghapus data')
+                            this.$toast.success("Berhasil menghapus data.")
+                        }else this.$toast.error("Gagal menghapus data.")
                     })
                 }
             })

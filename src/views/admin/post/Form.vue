@@ -99,7 +99,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { VueEditor } from "vue2-editor";
+import { VueEditor } from "vue2-editor"
 
 export default {
     props: {
@@ -144,6 +144,10 @@ export default {
             else return this.data
         }
     },
+    setup(){
+        const toast = useToast()
+        return {toast}
+    },
     methods: {
         ...mapActions({
             saveData: 'post/create',
@@ -162,8 +166,8 @@ export default {
                         if(resp.status){
                             this.form = {};
                             this.$emit('close', false);
-                            this.$notify('Berhasil menyimpan1 data')
-                        } else this.$notify('Gagal menyimpan data', {color: 'danger'})
+                            this.$toast.success('Berhasil menyimpan data')
+                        } else this.$toast.error('Gagal menyimpan data')
                         })
                     } else {
                         /** UPDATE */
@@ -171,10 +175,9 @@ export default {
                         if(resp.status){
                             this.form = {}
                             this.$emit('close',false);
-                            this.$notify('Berhasil mengubah data')
-                        } else this.$notify('Gagal mengubah data', {color: 'danger'})
+                            this.$toast.success('Berhasil mengubah data')
+                        } else this.$toast.error('Gagal mengubah data')
                         })
-
                     }
                 }catch(e){
                 console.log(e)
