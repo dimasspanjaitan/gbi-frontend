@@ -1,6 +1,6 @@
 <template>
   <v-card class="pa-5">
-        <v-toolbar color="primary" flat dark>POST</v-toolbar>
+        <v-toolbar color="primary" flat dark>EVENT</v-toolbar>
         <v-card-text>
           <v-form ref="form" lazy-validation>
             <v-container>
@@ -34,46 +34,47 @@
                     <vue-editor
                         v-model="form.content"
                         :rules="contentRules"
-                        
+                    ></vue-editor>
+                    <vue-editor
+                        v-model="form.committee"
+                        :rules="committeeRules"
                     ></vue-editor>
                     <v-row>
-                        <v-menu
-                            v-model="menu"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
-                        >
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                    v-model="form.publish_date"
-                                    label="Tanggal Publis"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    class="pa-2 pt-10"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                            v-model="form.publish_date"
-                            @input="menu = false"
-                            ></v-date-picker>
-                        </v-menu>
                         <v-switch
                             v-model="form.is_publish"
                             inset
-                            label="Status"
+                            label="Status Publish"
+                            class="pt-10 pl-5 pr-10"
+                        ></v-switch>
+                        <v-switch
+                            v-model="form.is_active"
+                            inset
+                            label="Status Aktif"
                             class="pt-10 pl-5 pr-10"
                         ></v-switch>
                     </v-row>
-                    <v-select
-                        :items="categories"
-                        :rules="categoryRules"
-                        label="Kategori"
-                        v-model="form.category"
-                    ></v-select>
+                    <v-row>
+                        <v-col
+                        cols="12"
+                        sm="6"
+                        >
+                            <v-date-picker
+                                v-model="dates"
+                                range
+                            ></v-date-picker>
+                        </v-col>
+                        <v-col
+                            cols="12"
+                            sm="6"
+                            >
+                            <v-text-field
+                                v-model="dateRangeText"
+                                label="Date range"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
                 </v-col>
               </v-row>
             </v-container>
@@ -130,16 +131,16 @@ export default {
                 value => (value || '').length <= 40 || 'Maksimal 40 karakter',
             ],
             imageRules: [
-                value => !value || value.size < 2000000 || 'Gambar maksimal 2 MB!',
+                // value => !value || value.size < 2000000 || 'Gambar maksimal 2 MB!',
             ],
             contentRules: [
                 value => !!value || 'Konten tidak boleh kosong',
             ],
-            categoryRules: [
+            committeeRules: [
                 value => !!value || 'Kategori tidak boleh kosong',
             ],
-            categories: [],
-            publish_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            dates: [],
+            // end_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             menu: false,
             modal: false,
         }
@@ -151,13 +152,15 @@ export default {
         form :function(){
             if(!this.mode) return {}
             else return this.data
-        }
+        },
+        dateRangeText () {
+            return this.dates.join(' ~ ')
+        },
     },
     methods: {
         ...mapActions({
-            saveData: 'post/create',
-            updateData: 'post/update',
-            getCategory: 'category/all'
+            saveData: 'event/create',
+            updateData: 'event/update',
         }),
         closeDialog(){
             this.$emit('close', false)
@@ -165,6 +168,8 @@ export default {
         async save(){
             if(this.$refs.form.validate()){
                 try{
+                    this.form.start_date = this.dates[0]
+                    this.form.end_date = this.dates[1]
                     if(!this.mode) {
                         /** INSERT */
                         this.saveData(this.form).then((resp) => {
@@ -176,6 +181,7 @@ export default {
                         })
                     } else {
                         /** UPDATE */
+                        this.form.image = null
                         await this.updateData(this.form).then((resp) => {
                         if(resp.status){
                             this.form = {}
@@ -189,22 +195,7 @@ export default {
                 }
             }
         },
-        async load(){
-            await this.getCategory().then((resp) => {
-                if(resp.status){
-                    this.categories = resp.data.data.map((q) =>{
-                        return {
-                            text: q.attributes.name,
-                            value: q.id
-                        }
-                    })
-                }
-            })
-        }
     },
-    mounted(){
-        this.load()
-    }
 }
 </script>
 

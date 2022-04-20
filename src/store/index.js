@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import post from './post'
 import category from './category'
 import musing from './musing'
+import event from './event'
 
 Vue.use(Vuex)
 
@@ -11,6 +12,7 @@ const store = new Vuex.Store({
     post,
     category,
     musing,
+    event,
   }
 })
 
